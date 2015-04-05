@@ -30,6 +30,7 @@ class App {
         this.shipAbleToLaunch = true;
         this.gameEnded = false;
         this.exploding = false;
+        this.shipAngle = 0;
     }
 
     render() {
@@ -55,7 +56,6 @@ class App {
     }
 
     onFrame(event) {
-        // console.log(this.shipMotion);
         if (this.exploding) {
             this.playerShip.opacity *= 0.98;
             if (this.playerShip.opacity < .1) {
@@ -74,7 +74,8 @@ class App {
             this.gameEnded = true;
         }
 
-        else {
+        else if (!this.shipAbleToLaunch) {
+            this.addGravityAccel();
             this.playerShip.position = this.playerShip.position.add(this.shipMotion);
             if (this.shipMotion.length > .20) {
                 this.playerShip.thrust.visible = true;
@@ -92,8 +93,21 @@ class App {
                 this.scrollRight();
             }
 
-            // this.shipMotion = this.shipMotion.multiply(.992);
+            this.shipMotion = this.shipMotion.multiply(.992);
         }
+    }
+
+    addGravityAccel() {
+        var shipWeight = 1;
+        var G = 4;
+
+        var gForce = new Point({angle:0, length:0});
+        for (var i=0;i < this.asteroids.length;i++) {
+            var dist = this.playerShip.position.subtract(this.asteroids[i].position);
+            dist.length = this.asteroids[i].radius * G / Math.pow(dist.length, 2);
+            gForce = gForce.add(dist.negate());
+        }
+        this.shipMotion = this.shipMotion.add(gForce);
     }
 
     getShipViewportPos() {
@@ -124,7 +138,6 @@ class App {
     }
 
     shipHasCollided() {
-        return false;
         for (var i in this.asteroids) {
             if (this.playerShip.intersects(this.asteroids[i].firstChild)) {
                 return true;
@@ -160,7 +173,7 @@ class App {
     onMouseUp(event) {
         if (this.fireLine != null) {
             var delta = this.playerShip.position.subtract(event.point);
-            delta.length /= 20
+            delta.length /= 10;
             this.shipMotion = delta;
             this.fireLine.remove();
             this.fireLine = null;
@@ -172,11 +185,10 @@ class App {
     generateLayout() {
         /* Generates layout, with a default number of asteroids */
         var globalBounds = view.bounds.clone()
-        console.log(globalBounds)
         globalBounds.width -= 400
         globalBounds.x += 200
 
-        for (var i=0; i < 10; i++) {
+        for (var i=0; i < NUM_ASTEROIDS; i++) {
             var asteroid = undefined;
             do {
                 if (asteroid !== undefined) {
@@ -250,14 +262,30 @@ class App {
     }
 
     onKeyDown(event) {
-        if (event.key === "right") {
-            this.scrollRight();
-            // console.log($("#game").css('left'))
+        switch(event.key) {
+            case "right":
+                this.playerShip.rotate(TURN_AMT);
+                this.shipAngle += TURN_AMT;
+
+                break;
+            case "left":
+                this.playerShip.rotate(-TURN_AMT);
+                this.shipAngle -= TURN_AMT;
+                break;
+            case "up":
+                this.shipMotion = this.shipMotion.add(new Point({angle:this.shipAngle, length:.05}));
+                break;
+
         }
-        if (event.key === "left") {
-            this.scrollLeft(); 
-            // console.log($("#game").css('left'))
-        }
+            // if (event.key === "right") {
+            //     // this.scrollRight();
+            //     this.playerShip.rotate(3);
+            // }
+            // else if (event.key === "left") {
+            //     // this.scrollLeft(); 
+            //     this.playerShip.rotate(-3);
+
+            // }
     }
 
     beginShipFire(event) {
