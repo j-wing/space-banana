@@ -30,6 +30,7 @@ class App {
         this.shipAbleToLaunch = true;
         this.gameEnded = false;
         this.exploding = false;
+        this.shipAngle = 0;
     }
 
     render() {
@@ -44,6 +45,7 @@ class App {
         // var asteroid = assets.createAsteroid(50)
         // asteroid.position = view.bounds.center
         this.homeBase = new Base(1);
+        this.enemyBase = new Base(2);
 
         this.playerShip = this.assets.createShip();
         this.playerShip.thrust.visible = false
@@ -54,7 +56,6 @@ class App {
     }
 
     onFrame(event) {
-        // console.log(this.shipMotion);
         if (this.exploding) {
             this.playerShip.opacity *= 0.98;
             if (this.playerShip.opacity < .1) {
@@ -74,6 +75,7 @@ class App {
         }
 
         else if (!this.shipAbleToLaunch) {
+            this.addGravityAccel();
             this.playerShip.position = this.playerShip.position.add(this.shipMotion);
             if (this.shipMotion.length > .20) {
                 this.playerShip.thrust.visible = true;
@@ -85,7 +87,42 @@ class App {
             keepInView(this.playerShip);
 
             this.shipMotion = this.shipMotion.multiply(.992);
+
+            if (this.shouldScrollLeft()) {
+                this.scrollLeft();
+            }
+            else if (this.shouldScrollRight()) {
+                this.scrollRight();
+            }
+
+            this.shipMotion = this.shipMotion.multiply(.992);
         }
+    }
+
+    addGravityAccel() {
+        var shipWeight = 1;
+        var G = 4;
+
+        var gForce = new Point({angle:0, length:0});
+        for (var i=0;i < this.asteroids.length;i++) {
+            var dist = this.playerShip.position.subtract(this.asteroids[i].position);
+            dist.length = this.asteroids[i].radius * G / Math.pow(dist.length, 2);
+            gForce = gForce.add(dist.negate());
+        }
+        this.shipMotion = this.shipMotion.add(gForce);
+    }
+
+    getShipViewportPos() {
+        // Note: left offset is negative
+        return this.playerShip.position.x + $("#game").position().left;
+    }
+
+    shouldScrollLeft() {
+        return this.getShipViewportPos() < (window.innerWidth * .1);
+    }
+
+    shouldScrollRight() {
+        return this.getShipViewportPos() > (window.innerWidth * .8);
     }
 
     asplode() {
@@ -138,7 +175,7 @@ class App {
     onMouseUp(event) {
         if (this.fireLine != null) {
             var delta = this.playerShip.position.subtract(event.point);
-            delta.length /= 20
+            delta.length /= 10;
             this.shipMotion = delta;
             this.playerShip.angle = this.fireLine.angle
             this.fireLine.remove();
@@ -154,7 +191,7 @@ class App {
         globalBounds.width -= 600
         globalBounds.x += 300
 
-        for (var i=0; i < 20; i++) {
+        for (var i=0; i < NUM_ASTEROIDS; i++) {
             var asteroid = undefined;
             do {
                 if (asteroid !== undefined) {
@@ -176,7 +213,6 @@ class App {
             this.asteroids.push(asteroid)
         }
 
-        console.log(this.asteroids)
     }
 
     collidesWith(asteroid, prevAsteroids) {
@@ -211,27 +247,53 @@ class App {
     onMouseMove(event) {
     }
 
+    scrollRight() {
+        var rightPos = $("#game").position().left;
+        if (rightPos - SCROLL_AMOUNT < -CANVAS_WIDTH + $(window).width()) {
+            rightPos = -CANVAS_WIDTH + $(window).width() + SCROLL_AMOUNT;
+        }
+        TweenLite.to("#game", 0.3, {
+            left: rightPos - SCROLL_AMOUNT,
+            ease:Linear.ease
+        });
+    }
+
+    scrollLeft() {
+        var leftPos = $("#game").position().left
+        if (leftPos + SCROLL_AMOUNT > 0) {
+            leftPos = -SCROLL_AMOUNT;
+        }
+
+        TweenLite.to("#game", 0.3, {
+            left: leftPos + SCROLL_AMOUNT,
+            ease:Linear.ease
+        });
+    }
+
     onKeyDown(event) {
-        if (event.key === "right") {
-            // console.log(prevLeft/)
-            console.log("right key pressed")
-            var rightPos = $("#game").position().left
-            if (rightPos - 200 < -2000 + $(window).width()) {
-                rightPos = -2000 + $(window).width() + 200
-            }
-            TweenLite.to("#game", 0.3, {
-                left: rightPos - 200
-            })
+        switch(event.key) {
+            case "right":
+                this.playerShip.rotate(TURN_AMT);
+                this.shipAngle += TURN_AMT;
+
+                break;
+            case "left":
+                this.playerShip.rotate(-TURN_AMT);
+                this.shipAngle -= TURN_AMT;
+                break;
+            case "up":
+                this.shipMotion = this.shipMotion.add(new Point({angle:this.shipAngle, length:.05}));
+                break;
         }
-        if (event.key === "left") {
-            var leftPos = $("#game").position().left
-            if (leftPos + 200 > 0) {
-                leftPos = -200
-            }
-            TweenLite.to("#game", 0.3, {
-                left: leftPos + 200
-            })
-        }
+            // if (event.key === "right") {
+            //     // this.scrollRight();
+            //     this.playerShip.rotate(3);
+            // }
+            // else if (event.key === "left") {
+            //     // this.scrollLeft();
+            //     this.playerShip.rotate(-3);
+
+            // }
     }
 
     beginShipFire(event) {
