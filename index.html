@@ -25,6 +25,7 @@
                 app.render()
                 paper.view.draw()
             }
+            window.app = null;
 
             function onMouseDown(event) {
                 app.onMouseDown(event);
@@ -38,6 +39,12 @@
             }
             function onMouseMove(event) {
                 app.onMouseMove(event);
+            }
+            function onFrame(event) {
+                if (app) {
+                    app.onFrame(event);
+                    
+                }
             }
 
         </script>
