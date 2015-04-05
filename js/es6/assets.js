@@ -30,12 +30,13 @@ class Assets {
 	createAsteroid(radius) {
 		var numSides = _.random(5, 12)
 		var regShape = new Path.RegularPolygon(new Point(0,0), numSides, radius)
+		var irrAmt = radius * 0.5
 		var shape = new Path()
 
 		// make regShape slightly irregular
 		for (var i=0; i < numSides; i++) {
 			var pt = regShape.segments[i].point
-			var offset = (new Point(20, 20)).multiply(Point.random()).negate()
+			var offset = (new Point(irrAmt, irrAmt)).multiply(Point.random()).negate()
 			pt = pt.add(offset)
 
 			shape.add(pt)
@@ -43,7 +44,7 @@ class Assets {
 
 		shape.fillColor = 'white'
 
-		var gravityRing = new Path.Circle(new Point(-10,-10), radius + 20)
+		var gravityRing = new Path.Circle(new Point(-(20 / 2),-(20 / 2)), radius + 20)
 		gravityRing.strokeColor = "#FFF"
 
 		var group = new Group(shape, gravityRing)
