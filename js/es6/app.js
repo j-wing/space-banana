@@ -8,7 +8,18 @@ class App {
         var path = new Path.Rectangle(rect);
         path.fillColor = "black";
 
+        var assets = new Assets()
 
+        // Demo of Assets
+        var ship = assets.createShip()
+        ship.rotate(180)
+        ship.position = view.bounds.center
+        ship.position.x -= 200
+        // set thrust.visible to true to see thrust
+        ship.thrust.visible = false
+
+        var asteroid = assets.createAsteroid(50)
+        asteroid.position = view.bounds.center
     }
 
     onMouseDown(event) {

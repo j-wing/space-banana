@@ -23,6 +23,7 @@
             window.onAppLoaded = function() {
                 window.app = new App();
                 app.render();
+                paper.view.draw()
             }
 
             function onMouseDown(event) {
@@ -41,7 +42,7 @@
 
         </script>
         <script type="text/javascript">
-            require(["js/underscore-min.js", "dist/app.js"], function() {
+            require(["js/underscore-min.js", "dist/assets.js", "dist/app.js"], function() {
                 onAppLoaded();
             });
         </script>
