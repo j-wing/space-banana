@@ -65,21 +65,24 @@ class App {
         else if (this.gameWon() && !this.gameEnded) {
             this.gameEnded = true;
             $("canvas").addClass("rotate");
-            setTimeout(function(){alert("You win!!")}, 10000);
+            setTimeout(function(){alert("You win!!")}, 5000);
         }
         else if (this.gameEnded && !this.exploding) {
             this.asplode();
         }
-        else if (this.shipNearCollision()) {
-            this.shipMotion = this.shipMotion.add(this.shipMotion.negate().multiply(.9));
+        // else if (this.shipNearCollision()) {
+        //     this.shipMotion = this.shipMotion.add(this.shipMotion.negate().multiply(.9));
 
-        }
+        // }
         else if (this.shipHasCollided()) {
             this.asplode();
             this.gameEnded = true;
         }
 
         else if (!this.shipAbleToLaunch) {
+            if (this.shipMotion.length > MAX_ACCEL) {
+                this.shipMotion = this.shipMotion.normalize(MAX_ACCEL);
+            }
             this.addGravityAccel();
             this.playerShip.position = this.playerShip.position.add(this.shipMotion);
             if (this.shipMotion.length > .20) {
@@ -108,7 +111,7 @@ class App {
 
     addGravityAccel() {
         var shipWeight = 1;
-        var G = 4;
+        var G = 10;
 
         var gForce = new Point({angle:0, length:0});
         for (var i=0;i < this.asteroids.length;i++) {
@@ -292,7 +295,7 @@ class App {
                 this.shipAngle -= TURN_AMT;
                 break;
             case "up":
-                this.shipMotion = this.shipMotion.add(new Point({angle:this.shipAngle, length:.05}));
+                this.shipMotion = this.shipMotion.add(new Point({angle:this.shipAngle, length:.1}));
                 break;
 
         }
