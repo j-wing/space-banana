@@ -6,9 +6,11 @@ class Assets {
 	constructor() {
 	}
 
-	createShip() {
+	createShip(thrustVisible) {
 		var thrust = new Path([10,4],[20,7.5],[30,4],[20, -20])
-		thrust.closed = true
+		thrust.closed = true;
+		thrust.visible = thrustVisible;
+
 
 		var ship = new Path([0,0], [20,50], [40,0], [20,7.5])
 		ship.closed = true
