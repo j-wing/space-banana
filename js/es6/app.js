@@ -77,6 +77,7 @@ class App {
     beginShipFire(event) {
         this.fireLine = new Path(this.playerShip.bounds.center, this.playerShip.bounds.center);
         this.fireLine.strokeColor = "#F77542";
+        this.fireLine.strokeWidth = 3;
     }
 }
 
