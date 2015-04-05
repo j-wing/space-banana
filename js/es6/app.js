@@ -1,4 +1,23 @@
 import {Base} from "dist/base"
+function keepInView(item) {
+    var position = item.position;
+    var itemBounds = item.bounds;
+    var bounds = view.bounds;
+
+    if (itemBounds.left > bounds.width) {
+        alert("You win!");
+        window.app.gameEnded = true;
+    }
+
+
+    if (itemBounds.top > view.size.height) {
+        position.y = -itemBounds.height;
+    }
+
+    if (position.y < -itemBounds.height) {
+        position.y = bounds.height  + itemBounds.height / 2;
+    }
+}
 
 class App {
     constructor() {
@@ -8,6 +27,9 @@ class App {
         this.assets = new Assets();
 
         this.shipMotion = new Point({angle:0, length:0});
+        this.shipAbleToLaunch = true;
+        this.gameEnded = false;
+        this.exploding = false;
     }
 
     render() {
@@ -30,15 +52,60 @@ class App {
 
     onFrame(event) {
         // console.log(this.shipMotion);
-        this.playerShip.position = this.playerShip.position.add(this.shipMotion);
-        if (this.shipMotion.length > .2) {
-            this.playerShip.thrust.visible = true;
+        if (this.exploding) {
+            this.playerShip.opacity *= 0.98;
+            if (this.playerShip.opacity < .1) {
+                this.playerShip.remove();
+            }
         }
-        else {
-            this.playerShip.thrust.visible = false;
+        else if (this.gameEnded && !this.exploding) {
+            this.asplode();
+        }
+        else if (this.shipNearCollision()) {
+            this.shipMotion = this.shipMotion.add(this.shipMotion.negate().multiply(.9));
+
+        }
+        else if (this.shipHasCollided()) {
+            this.asplode();
+            this.gameEnded = true;
         }
 
-        this.shipMotion = this.shipMotion.multiply(.992);
+        else {
+            this.playerShip.position = this.playerShip.position.add(this.shipMotion);
+            if (this.shipMotion.length > .20) {
+                this.playerShip.thrust.visible = true;
+            }
+            else {
+                this.playerShip.thrust.visible = false;
+            }
+
+            keepInView(this.playerShip);
+
+            this.shipMotion = this.shipMotion.multiply(.992);            
+        }
+    }
+
+    asplode() {
+        this.exploding = true;
+    }
+
+    shipNearCollision() {
+        for (var i=0; i < this.asteroids.length; i++) {
+            var closest = this.playerShip.firstChild.getNearestPoint(this.asteroids[i].firstChild.bounds.center);
+            if (closest.subtract(this.playerShip.position).length < 5) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    shipHasCollided() {
+        for (var i in this.asteroids) {
+            if (this.playerShip.intersects(this.asteroids[i].firstChild)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     onMouseDown(event) {
@@ -53,7 +120,7 @@ class App {
         // this.arrowMagLine.position = event.point;
         // this.arrowMagLine.strokeColor = "white";
 
-        if (event.item == this.playerShip) {
+        if (event.item == this.playerShip && this.shipAbleToLaunch) {
             this.beginShipFire(event);
         }
 
@@ -72,6 +139,7 @@ class App {
             this.shipMotion = delta;
             this.fireLine.remove();
             this.fireLine = null;
+            this.shipAbleToLaunch = false;
         }
 
     }
