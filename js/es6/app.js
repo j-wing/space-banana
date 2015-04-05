@@ -3,9 +3,11 @@ import {Base} from "dist/base"
 class App {
     constructor() {
         this.fireLine = null;
-        this.ships = []
-        this.asteroids = []
-        this.assets = new Assets()
+        this.ships = [];
+        this.asteroids = [];
+        this.assets = new Assets();
+
+        this.shipMotion = new Point({angle:0, length:0});
     }
 
     render() {
@@ -27,6 +29,19 @@ class App {
 
         this.homeBase.positionShip(this.playerShip);
         this.generateLayout();
+    }
+
+    onFrame(event) {
+        // console.log(this.shipMotion);
+        this.playerShip.position = this.playerShip.position.add(this.shipMotion);
+        if (this.shipMotion.length > .2) {
+            this.playerShip.thrust.visible = true;
+        }
+        else {
+            this.playerShip.thrust.visible = false;
+        }
+
+        this.shipMotion = this.shipMotion.multiply(.992);
     }
 
     onMouseDown(event) {
@@ -55,6 +70,9 @@ class App {
 
     onMouseUp(event) {
         if (this.fireLine != null) {
+            var delta = this.playerShip.position.subtract(event.point);
+            delta.length /= 20
+            this.shipMotion = delta;
             this.fireLine.remove();
             this.fireLine = null;
         }

@@ -33,6 +33,7 @@
                 app.render()
                 paper.view.draw()
             }
+            window.app = null;
 
             function onMouseDown(event) {
                 app.onMouseDown(event);
@@ -49,6 +50,13 @@
             }
             function onKeyDown(event) {
                 app.onKeyDown(event)
+            }
+
+            function onFrame(event) {
+                if (app) {
+                    app.onFrame(event);
+
+                }]
             }
 
         </script>
