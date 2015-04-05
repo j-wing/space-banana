@@ -20,6 +20,7 @@ class App {
 
         var asteroid = assets.createAsteroid(50)
         asteroid.position = view.bounds.center
+        asteroid.gravityRing.visible = false
     }
 
     onMouseDown(event) {

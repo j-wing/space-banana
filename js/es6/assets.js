@@ -47,6 +47,7 @@ class Assets {
 		gravityRing.strokeColor = "#FFF"
 
 		var group = new Group(shape, gravityRing)
+		group.gravityRing = gravityRing
 		return group
 	}
 
