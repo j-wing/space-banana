@@ -140,6 +140,7 @@ class App {
     }
 
     shipHasCollided() {
+        return false;
         for (var i in this.asteroids) {
             if (this.playerShip.intersects(this.asteroids[i].firstChild)) {
                 return true;
@@ -271,6 +272,7 @@ class App {
     }
 
     onKeyDown(event) {
+        if (this.shipAbleToLaunch) { return }
         switch(event.key) {
             case "right":
                 this.playerShip.rotate(TURN_AMT);

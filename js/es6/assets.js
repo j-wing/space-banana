@@ -26,6 +26,8 @@ class Assets {
 		group.thrust = thrust
 		group.ship = ship
 		group.center = group.bounds.center.clone()
+		group.strokeColor = 'black'
+		group.strokeWidth = 3
 		return group
 	}
 
@@ -44,7 +46,10 @@ class Assets {
 			shape.add(pt)
 		}
 
-		shape.fillColor = 'white'
+		// shape.fillColor = 'white'
+		shape.closed = true
+		shape.strokeColor = 'white'
+		shape.strokeWidth = 10
 
 		var gravityRing = new Path.Circle(new Point(-(20 / 2),-(20 / 2)), radius + 20)
 		gravityRing.strokeColor = "#000"

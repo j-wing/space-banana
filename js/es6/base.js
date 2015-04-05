@@ -16,7 +16,7 @@ export class Base {
         // this.planet.lastChild.flatten(100);
 
         this.ring = this.makeRing();
-        this.ring.strokeColor = "white";
+        // this.ring.strokeColor = "white";
     }
 
     createPlanet() {
@@ -31,8 +31,8 @@ export class Base {
 
     makeRing() {
         return new Path.Arc(
-            [this.baseX + 50*this.offsetFactor, 0], 
-            [this.planetBulgeOffset + 50*this.offsetFactor, view.bounds.centerY], 
+            [this.baseX + 50*this.offsetFactor, 0],
+            [this.planetBulgeOffset + 50*this.offsetFactor, view.bounds.centerY],
             [this.baseX + 50*this.offsetFactor, view.bounds.bottom]
         );
     }
