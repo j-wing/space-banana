@@ -10,7 +10,7 @@
                 height: 100%;
             }
             canvas[resize] {
-                width: 300%;
+                width: 200%;
                 height: 100%;
                 overflow-x: hidden;
                 z-index:0;
@@ -19,8 +19,30 @@
             }
 
             canvas.rotate {
-                transition:5s;
-                transform: rotate(1800deg);
+                animation: 2s fade;
+                -webkit-animation: 2s fade;
+            }
+
+            canvas.animDone {
+                opacity:0;
+            }
+
+            @-webkit-keyframes fade {
+                from {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
+            }
+
+            @keyframes fade {
+                from {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
             }
         </style>
         <script src="js/require.min.js"></script>
@@ -83,3 +105,4 @@
         </canvas>
     </body>
 </html>
+    

@@ -65,7 +65,10 @@ class App {
         else if (this.gameWon() && !this.gameEnded) {
             this.gameEnded = true;
             $("canvas").addClass("rotate");
-            setTimeout(function(){alert("You win!!")}, 5000);
+            setTimeout(function(){
+                $("canvas").addClass("animDone");
+                alert("You win!!")
+            }, 2000);
         }
         else if (this.gameEnded && !this.exploding) {
             this.asplode();
@@ -252,7 +255,7 @@ class App {
         } else if (this.shipAbleToLaunch) {
             var closest = this.homeBase.ring.getNearestPoint(event.point);
             this.playerShip.position = closest;
-            this.fireLine.firstSegment.point = closest;
+            // this.fireLine.firstSegment.point = closest;
         }
     }
 
