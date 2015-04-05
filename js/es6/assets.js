@@ -6,11 +6,9 @@ class Assets {
 	constructor() {
 	}
 
-	createShip(thrustVisible) {
+	createShip() {
 		var thrust = new Path([10,4],[20,7.5],[30,4],[20, -20])
 		thrust.closed = true;
-		thrust.visible = thrustVisible;
-
 
 		var ship = new Path([0,0], [20,50], [40,0], [20,7.5])
 		ship.closed = true
@@ -47,10 +45,12 @@ class Assets {
 		shape.fillColor = 'white'
 
 		var gravityRing = new Path.Circle(new Point(-(20 / 2),-(20 / 2)), radius + 20)
-		gravityRing.strokeColor = "#FFF"
+		gravityRing.strokeColor = "#000"
 
 		var group = new Group(shape, gravityRing)
 		group.gravityRing = gravityRing
+		group.radius = radius
+		// group.gravityRing.visible = false
 		return group
 	}
 
