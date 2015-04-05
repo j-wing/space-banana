@@ -2,7 +2,7 @@ export class Base {
     constructor(player) {
         this.player = player;
         this.planet = this.createPlanet();
-        this.planet.lastChild.flatten(200);
+        this.planet.lastChild.flatten(100);
 
         this.ring = this.makeRing();
         this.ring.strokeColor = "white";
@@ -11,7 +11,7 @@ export class Base {
     createPlanet() {
         return new CompoundPath({
                     children:[
-                        new Path.Line([0, 0], [0, view.bounds.bottomLeft.y]), 
+                        new Path.Line([0, 0], [0, view.bounds.bottomLeft.y]),
                         new Path.Arc([0, 0], [200, view.bounds.centerY], [0, view.bounds.bottomLeft.y])
                     ],
                     fillColor:"white"

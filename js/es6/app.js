@@ -13,7 +13,6 @@ class App {
         var path = new Path.Rectangle(rect);
         path.fillColor = "black";
 
-
         // // Demo of Assets
         // var ship = assets.createShip()
         // ship.thrust.visible = false
@@ -21,7 +20,11 @@ class App {
         // var asteroid = assets.createAsteroid(50)
         // asteroid.position = view.bounds.center
         this.homeBase = new Base(1);
-        this.playerShip = this.assets.createShip(false);
+
+        this.playerShip = this.assets.createShip();
+        this.playerShip.thrust.visible = false
+        this.playerShip.scale(0.75)
+
         this.homeBase.positionShip(this.playerShip);
         this.generateLayout();
     }
@@ -66,7 +69,6 @@ class App {
         globalBounds.x += 200
 
         for (var i=0; i < 10; i++) {
-            console.log("hi")
             var asteroid = undefined;
             do {
                 if (asteroid !== undefined) {
@@ -115,6 +117,31 @@ class App {
     }
 
     onMouseMove(event) {
+    }
+
+    onKeyDown(event) {
+        if (event.key === "right") {
+            // console.log(prevLeft/)
+            console.log("right key pressed")
+            var rightPos = $("#game").position().left
+            if (rightPos - 200 < -2000 + $(window).width()) {
+                rightPos = -2000 + $(window).width() + 200
+            }
+            TweenLite.to("#game", 0.3, {
+                left: rightPos - 200
+            })
+            // console.log($("#game").css('left'))
+        }
+        if (event.key === "left") {
+            var leftPos = $("#game").position().left
+            if (leftPos + 200 > 0) {
+                leftPos = -200
+            }
+            TweenLite.to("#game", 0.3, {
+                left: leftPos + 200
+            })
+            // console.log($("#game").css('left'))
+        }
     }
 
     beginShipFire(event) {
