@@ -10,7 +10,7 @@
                 height: 100%;
             }
             canvas[resize] {
-                width: 2000px;
+                width: 200%;
                 height: 100%;
                 overflow-x: hidden;
                 z-index:0;
@@ -24,10 +24,12 @@
         <script src="js/paper-full.min.js"></script>
         <script type="text/paperscript" canvas="game">
             paper.install(window);
+            window.CANVAS_WIDTH = 2 * window.innerWidth;
+            window.SCROLL_AMOUNT = 80;
             window.onAppLoaded = function() {
                 $("#game").attr({
                     height: window.innerHeight,
-                    width: "2000px"
+                    width: CANVAS_WIDTH
                 })
                 window.app = new App();
                 app.render()

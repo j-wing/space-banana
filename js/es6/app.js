@@ -44,6 +44,7 @@ class App {
         // var asteroid = assets.createAsteroid(50)
         // asteroid.position = view.bounds.center
         this.homeBase = new Base(1);
+        this.enemyBase = new Base(2);
 
         this.playerShip = this.assets.createShip();
         this.playerShip.thrust.visible = false
@@ -84,8 +85,28 @@ class App {
 
             keepInView(this.playerShip);
 
-            this.shipMotion = this.shipMotion.multiply(.992);            
+            if (this.shouldScrollLeft()) {
+                this.scrollLeft();
+            }
+            else if (this.shouldScrollRight()) {
+                this.scrollRight();
+            }
+
+            // this.shipMotion = this.shipMotion.multiply(.992);
         }
+    }
+
+    getShipViewportPos() {
+        // Note: left offset is negative
+        return this.playerShip.position.x + $("#game").position().left;
+    }
+
+    shouldScrollLeft() {
+        return this.getShipViewportPos() < (window.innerWidth * .1);
+    }
+
+    shouldScrollRight() {
+        return this.getShipViewportPos() > (window.innerWidth * .8);
     }
 
     asplode() {
@@ -103,6 +124,7 @@ class App {
     }
 
     shipHasCollided() {
+        return false;
         for (var i in this.asteroids) {
             if (this.playerShip.intersects(this.asteroids[i].firstChild)) {
                 return true;
@@ -176,7 +198,6 @@ class App {
             this.asteroids.push(asteroid)
         }
 
-        console.log(this.asteroids)
     }
 
     collidesWith(asteroid, prevAsteroids) {
@@ -205,27 +226,36 @@ class App {
     onMouseMove(event) {
     }
 
+    scrollRight() {
+        var rightPos = $("#game").position().left;
+        if (rightPos - SCROLL_AMOUNT < -CANVAS_WIDTH + $(window).width()) {
+            rightPos = -CANVAS_WIDTH + $(window).width() + SCROLL_AMOUNT;
+        }
+        TweenLite.to("#game", 0.3, {
+            left: rightPos - SCROLL_AMOUNT,
+            ease:Linear.ease
+        });
+    }
+
+    scrollLeft() {
+        var leftPos = $("#game").position().left
+        if (leftPos + SCROLL_AMOUNT > 0) {
+            leftPos = -SCROLL_AMOUNT;
+        }
+
+        TweenLite.to("#game", 0.3, {
+            left: leftPos + SCROLL_AMOUNT,
+            ease:Linear.ease
+        });
+    }
+
     onKeyDown(event) {
         if (event.key === "right") {
-            // console.log(prevLeft/)
-            console.log("right key pressed")
-            var rightPos = $("#game").position().left
-            if (rightPos - 200 < -2000 + $(window).width()) {
-                rightPos = -2000 + $(window).width() + 200
-            }
-            TweenLite.to("#game", 0.3, {
-                left: rightPos - 200
-            })
+            this.scrollRight();
             // console.log($("#game").css('left'))
         }
         if (event.key === "left") {
-            var leftPos = $("#game").position().left
-            if (leftPos + 200 > 0) {
-                leftPos = -200
-            }
-            TweenLite.to("#game", 0.3, {
-                left: leftPos + 200
-            })
+            this.scrollLeft(); 
             // console.log($("#game").css('left'))
         }
     }
