@@ -62,12 +62,13 @@ class App {
                 this.playerShip.remove();
             }
         }
+        else if (this.gameWon() && !this.gameEnded) {
+            this.gameEnded = true;
+            $("canvas").addClass("rotate");
+            setTimeout(function(){alert("You win!!")}, 10000);
+        }
         else if (this.gameEnded && !this.exploding) {
             this.asplode();
-        }
-        else if (this.shipNearCollision()) {
-            this.shipMotion = this.shipMotion.add(this.shipMotion.negate().multiply(.9));
-
         }
         else if (this.shipHasCollided()) {
             this.asplode();
@@ -95,6 +96,10 @@ class App {
 
             this.shipMotion = this.shipMotion.multiply(.992);
         }
+    }
+
+    gameWon() {
+        return this.enemyBase.planet.lastChild.intersects(this.playerShip);
     }
 
     addGravityAccel() {
@@ -138,6 +143,7 @@ class App {
     }
 
     shipHasCollided() {
+        return false;
         for (var i in this.asteroids) {
             if (this.playerShip.intersects(this.asteroids[i].firstChild)) {
                 return true;
@@ -277,15 +283,6 @@ class App {
                 break;
 
         }
-            // if (event.key === "right") {
-            //     // this.scrollRight();
-            //     this.playerShip.rotate(3);
-            // }
-            // else if (event.key === "left") {
-            //     // this.scrollLeft(); 
-            //     this.playerShip.rotate(-3);
-
-            // }
     }
 
     beginShipFire(event) {
