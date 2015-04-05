@@ -70,6 +70,10 @@ class App {
         else if (this.gameEnded && !this.exploding) {
             this.asplode();
         }
+        else if (this.shipNearCollision()) {
+            this.shipMotion = this.shipMotion.add(this.shipMotion.negate().multiply(.9));
+
+        }
         else if (this.shipHasCollided()) {
             this.asplode();
             this.gameEnded = true;
@@ -143,7 +147,6 @@ class App {
     }
 
     shipHasCollided() {
-        return false;
         for (var i in this.asteroids) {
             if (this.playerShip.intersects(this.asteroids[i].firstChild)) {
                 return true;
@@ -181,6 +184,7 @@ class App {
             var delta = this.playerShip.position.subtract(event.point);
             delta.length /= 10;
             this.shipMotion = delta;
+            this.playerShip.angle = this.fireLine.angle
             this.fireLine.remove();
             this.fireLine = null;
             this.shipAbleToLaunch = false;
@@ -191,8 +195,8 @@ class App {
     generateLayout() {
         /* Generates layout, with a default number of asteroids */
         var globalBounds = view.bounds.clone()
-        globalBounds.width -= 400
-        globalBounds.x += 200
+        globalBounds.width -= 600
+        globalBounds.x += 300
 
         for (var i=0; i < NUM_ASTEROIDS; i++) {
             var asteroid = undefined;
@@ -229,12 +233,19 @@ class App {
     }
 
     onMouseDrag(event) {
-        if (this.fireLine != null) {
-            if (event.delta.x > 0) {
-                return;
+        if (this.fireLine != null && this.shipAbleToLaunch) {
+
+            if (this.playerShip.prevRotation !== undefined) {
+                this.playerShip.rotate(-this.playerShip.prevRotation, this.fireLine.firstSegment.point)
             }
 
             this.fireLine.lastSegment.point = event.point;
+            var vector = this.fireLine.lastSegment.point.add((this.fireLine.firstSegment.point).negate())
+            this.playerShip.prevRotation = vector.angle + 180
+            var center = this.playerShip.bounds.center.clone()
+            this.playerShip.rotate(this.playerShip.prevRotation, this.fireLine.firstSegment.point)
+
+        } else if (this.shipAbleToLaunch) {
             var closest = this.homeBase.ring.getNearestPoint(event.point);
             this.playerShip.position = closest;
             this.fireLine.firstSegment.point = closest;
@@ -283,6 +294,15 @@ class App {
                 break;
 
         }
+            // if (event.key === "right") {
+            //     // this.scrollRight();
+            //     this.playerShip.rotate(3);
+            // }
+            // else if (event.key === "left") {
+            //     // this.scrollLeft(); 
+            //     this.playerShip.rotate(-3);
+
+            // }
     }
 
     beginShipFire(event) {

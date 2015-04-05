@@ -24,6 +24,8 @@ class Assets {
 		- rotate/scale using .rotate() and .scale(factor)
 		*/
 		group.thrust = thrust
+		group.ship = ship
+		group.center = group.bounds.center.clone()
 		return group
 	}
 
@@ -46,6 +48,7 @@ class Assets {
 
 		var gravityRing = new Path.Circle(new Point(-(20 / 2),-(20 / 2)), radius + 20)
 		gravityRing.strokeColor = "#000"
+		gravityRing.strokeColor.alpha = 0.0
 
 		var group = new Group(shape, gravityRing)
 		group.gravityRing = gravityRing
